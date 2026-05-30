@@ -34,6 +34,8 @@
 #include "crsf_telemetry.h"
 #include <lib/rc/crsf.h>
 
+#include <cstdio>
+
 CRSFTelemetry::CRSFTelemetry(int uart_fd) :
 	_uart_fd(uart_fd)
 {
@@ -134,23 +136,23 @@ bool CRSFTelemetry::send_flight_mode()
 
 	switch (vehicle_status.nav_state) {
 	case vehicle_status_s::NAVIGATION_STATE_MANUAL:
-		flight_mode = "Manual";
+		flight_mode = "MAN"; // Manual
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_ALTCTL:
-		flight_mode = "Altitude";
+		flight_mode = "ALT"; // Altitude
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_POSCTL:
-		flight_mode = "Position";
+		flight_mode = "POS"; // Position
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_AUTO_RTL:
-		flight_mode = "Return";
+		flight_mode = "RTL"; // Return
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION:
-		flight_mode = "Mission";
+		flight_mode = "MIS"; // Mission
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER:
@@ -159,25 +161,69 @@ bool CRSFTelemetry::send_flight_mode()
 	case vehicle_status_s::NAVIGATION_STATE_AUTO_LAND:
 	case vehicle_status_s::NAVIGATION_STATE_AUTO_FOLLOW_TARGET:
 	case vehicle_status_s::NAVIGATION_STATE_AUTO_PRECLAND:
-		flight_mode = "Auto";
+		flight_mode = "AUT"; // Auto
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_ACRO:
-		flight_mode = "Acro";
+		flight_mode = "ACR"; // Acro
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_TERMINATION:
-		flight_mode = "Terminate";
+		flight_mode = "TRM"; // Terminate
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_OFFBOARD:
-		flight_mode = "Offboard";
+		flight_mode = "OFB"; // Offboard
 		break;
 
 	case vehicle_status_s::NAVIGATION_STATE_STAB:
-		flight_mode = "Stabilized";
+		flight_mode = "STB"; // Stabilized
 		break;
 	}
 
-	return crsf_send_telemetry_flight_mode(_uart_fd, flight_mode);
+	const bool armed = (vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED);
+	const bool ready = vehicle_status.pre_flight_checks_pass && vehicle_status.safety_off;
+	const char *state = armed ? "ARM" : (ready ? "RDY" : "NRY"); // ARM=armed, RDY=ready to fly, NRY=not ready
+
+	const char *fix = "NG"; // NG=no gps, NF=no fix, 2D=2D fix, 3D=3D fix, DG=DGPS, RF=RTK float, RX=RTK fixed, EX=extrapolated
+	sensor_gps_s gps{};
+
+	if (_vehicle_gps_position_sub.copy(&gps)) {
+		if (gps.satellites_used > 0) {
+			switch (gps.fix_type) {
+			case sensor_gps_s::FIX_TYPE_2D:
+				fix = "2D";
+				break;
+
+			case sensor_gps_s::FIX_TYPE_3D:
+				fix = "3D";
+				break;
+
+			case sensor_gps_s::FIX_TYPE_RTCM_CODE_DIFFERENTIAL:
+				fix = "DG";
+				break;
+
+			case sensor_gps_s::FIX_TYPE_RTK_FLOAT:
+				fix = "RF";
+				break;
+
+			case sensor_gps_s::FIX_TYPE_RTK_FIXED:
+				fix = "RX";
+				break;
+
+			case sensor_gps_s::FIX_TYPE_EXTRAPOLATED:
+				fix = "EX";
+				break;
+
+			default:
+				fix = "NF";
+				break;
+			}
+		}
+	}
+
+	char flight_mode_with_state[16] {};
+	std::snprintf(flight_mode_with_state, sizeof(flight_mode_with_state), "%s %s %s", flight_mode, state, fix);
+
+	return crsf_send_telemetry_flight_mode(_uart_fd, flight_mode_with_state);
 }
