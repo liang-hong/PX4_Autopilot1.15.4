@@ -1,0 +1,5 @@
+menuconfig DRIVERS_OLED_DISPLAY_SH1106_NOTIFY
+	bool "sh1106_notify"
+	default n
+	---help---
+		Enable support for i2c screen

@@ -346,3 +346,33 @@ CONFIG:
       buildType: MinSizeRel
       settings:
         CONFIG: raspberrypi_pico_default
+    micoair_h743_default:
+      short: micoair_h743
+      buildType: MinSizeRel
+      settings:
+        CONFIG: micoair_h743_default
+    micoair_h743_bootloader:
+      short: micoair_h743_bootloader
+      buildType: MinSizeRel
+      settings:
+        CONFIG: micoair_h743_bootloader
+    micoair_h743-aio_default:
+      short: micoair_h743-aio
+      buildType: MinSizeRel
+      settings:
+        CONFIG: micoair_h743-aio_default
+    micoair_h743-aio_bootloader:
+      short: micoair_h743-aio_bootloader
+      buildType: MinSizeRel
+      settings:
+        CONFIG: micoair_h743-aio_bootloader
+    micoair_h743-v2_default:
+      short: micoair_h743-v2
+      buildType: MinSizeRel
+      settings:
+        CONFIG: micoair_h743-v2_default
+    micoair_h743-v2_bootloader:
+      short: micoair_h743-v2_bootloader
+      buildType: MinSizeRel
+      settings:
+        CONFIG: micoair_h743-v2_bootloader

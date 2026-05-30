@@ -1,0 +1,9 @@
+menu "oled_display"
+    menuconfig COMMON_OLED_DISPLAY
+        bool "Common oled display"
+        default n
+        select DRIVERS_OLED_DISPLAY_SH1106_NOTIFY
+        ---help---
+            Enable default set of oled display drivers
+    rsource "*/Kconfig"
+endmenu
