@@ -53,6 +53,7 @@
  * Definitions
  ****************************************************************************************************/
 
+// #define FLASH_BASED_PARAMS
 
 
 /* LEDs are driven with push open drain to support Anode to 5V or 3.3V */
@@ -146,6 +147,7 @@
 
 #define BOARD_ENABLE_CONSOLE_BUFFER
 
+#define FLASH_BASED_PARAMS
 
 #define BOARD_NUM_IO_TIMERS 4
 

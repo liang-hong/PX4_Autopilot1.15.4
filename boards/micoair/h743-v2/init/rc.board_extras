@@ -5,5 +5,3 @@
 
 # enable onboard OSD chip
 # atxxxx start -s
-
-sh1106_notify start -b 1 -a 0x3c
