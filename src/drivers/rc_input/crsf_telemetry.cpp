@@ -185,7 +185,7 @@ bool CRSFTelemetry::send_flight_mode()
 	const bool ready = vehicle_status.pre_flight_checks_pass && vehicle_status.safety_off;
 	const char *state = armed ? "ARM" : (ready ? "RDY" : "NRY"); // ARM=armed, RDY=ready to fly, NRY=not ready
 
-	const char *fix = "NG"; // NG=no gps, NF=no fix, 2D=2D fix, 3D=3D fix, DG=DGPS, RF=RTK float, RX=RTK fixed, EX=extrapolated
+	const char *fix = "NG"; // NG=no gps, NX=no fix, 2D=2D fix, 3D=3D fix, DG=DGPS, RF=RTK float, RX=RTK fixed, EX=extrapolated
 	sensor_gps_s gps{};
 
 	if (_vehicle_gps_position_sub.copy(&gps)) {
@@ -216,7 +216,7 @@ bool CRSFTelemetry::send_flight_mode()
 				break;
 
 			default:
-				fix = "NF";
+				fix = "NX";
 				break;
 			}
 		}
